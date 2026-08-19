@@ -67,3 +67,9 @@ Auto scaling
 
 
 Create the Auto Scale and then review it 
+
+connect to main VM --- then Connec to another VM with private IP 
+top command to see the utilization 
+now incease the load 
+$ yes > /dev/null &    // spike the cpu 
+$ top 
