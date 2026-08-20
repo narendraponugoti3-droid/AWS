@@ -36,7 +36,21 @@ VMs should be part of ifferent racks and different hardwares
     I have 3 rack and place my all VMs regarding Frontend and backend and DB place into single rack with single hardware 
 <img width="954" height="281" alt="image" src="https://github.com/user-attachments/assets/c846369a-4805-49b7-964a-0cb7e60e26cb" />
 
+| Placement Group | Same AZ? | Multiple AZs?                 |
+| --------------- | -------- | ----------------------------- |
+| **Cluster**     | ✅ Yes    | ❌ No                          |
+| **Spread**      | ✅ Yes    | ✅ Yes, within the same Region |
+| **Partition**   | ✅ Yes    | ✅ Yes, within the same Region |
 
+The key point to remember
+
+Cluster = one AZ only
+Spread = can span multiple AZs
+Partition = can span multiple AZs
+
+<img width="1282" height="844" alt="image" src="https://github.com/user-attachments/assets/72da4c5f-4afb-4940-a262-eb373149e9da" />
+
+<img width="786" height="527" alt="image" src="https://github.com/user-attachments/assets/b8609cbf-12e4-4f2b-96b7-aed94201349e" />
 
 AWS Console --> EC2 --> Placement group --> Create Placement group 
 <img width="1448" height="499" alt="image" src="https://github.com/user-attachments/assets/4c64812f-e420-437e-91c5-2fc67b66ec8a" />
