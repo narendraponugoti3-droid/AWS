@@ -39,3 +39,22 @@ defines how route 53 should resolve the DNS queries , especially when there are 
 
 <img width="1235" height="623" alt="image" src="https://github.com/user-attachments/assets/85d673a4-abe7-4021-80ca-4fcf02e955f8" />
 
+<img width="1171" height="572" alt="image" src="https://github.com/user-attachments/assets/c6a08ee9-4231-4f53-a88e-dde37b5481d9" />
+
+
+<img width="1830" height="876" alt="image" src="https://github.com/user-attachments/assets/995751b1-9fbd-4d8b-ac4f-3100477565de" />
+
+
+<img width="1221" height="608" alt="image" src="https://github.com/user-attachments/assets/a15d4744-6921-4137-83af-a380fd226931" />
+
+<img width="1231" height="579" alt="image" src="https://github.com/user-attachments/assets/8883e957-fa7f-4fc9-8d48-f13d04ff8932" />
+
+
+<img width="1164" height="585" alt="image" src="https://github.com/user-attachments/assets/2a98bfdb-fdb6-4686-8007-0d49a9f07a70" />
+
+<img width="1844" height="935" alt="image" src="https://github.com/user-attachments/assets/f05923a8-8294-41e5-97d2-2ab034f88df4" />
+
+
+<img width="1734" height="872" alt="image" src="https://github.com/user-attachments/assets/12ae011e-f165-4252-90ec-8c9362b893b6" />
+
+<img width="1765" height="898" alt="image" src="https://github.com/user-attachments/assets/f2f9c2bf-01a8-4e01-b7d3-f4bf93edffa5" />
