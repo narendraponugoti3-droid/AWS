@@ -9,6 +9,23 @@
 # Elastic Load Balancer 
 <img width="1725" height="900" alt="image" src="https://github.com/user-attachments/assets/6a81ae41-8097-4a57-8ae9-ca9fbfd31094" />
 
+So, when AWS says "Provide SSL/TLS termination", simply remember:
+
+The ELB/ALB receives HTTPS traffic, handles the SSL/TLS certificate and encryption, decrypts the request, and forwards it to the backend servers.
+SSL = Secure Sockets Layer
+TLS
+
+TLS = Transport Layer Security
+
+TLS is the modern replacement for SSL.
+What does TLS provide?
+
+TLS mainly provides:
+
+Encryption 🔒 — prevents others from reading the data.
+Authentication ✅ — helps verify you're connecting to the intended website.
+Integrity 🛡️ — helps detect if the data was modified in transit.
+
 <img width="1809" height="925" alt="image" src="https://github.com/user-attachments/assets/75c49709-f3ca-4683-a9bc-49016e200c23" />
 
 ### Security Group 
