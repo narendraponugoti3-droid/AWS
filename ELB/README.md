@@ -38,13 +38,13 @@ In Soruce : Select security group of ALB
 <img width="1214" height="597" alt="image" src="https://github.com/user-attachments/assets/26f61709-48b7-482f-8af9-d27e3bbbc903" />
 
 ### OSI Network Layers 
-Layer3 -Network -IP Layer is used for routing the traffic that means it tells where to send the packet 
-Layer4-Transport - TCP/UDP which are actually responsible for transmitting the packet from source to destination 
+- Layer3 -Network -IP Layer is used for routing the traffic that means it tells where to send the packet 
+- Layer4-Transport - TCP/UDP which are actually responsible for transmitting the packet from source to destination 
                    TCP is connection Oriented where it can also valitate whether you have received all packets or not 
                    and UDP is connectionless 
                    TCP/UDP are responsible for actually sending the packet from source to destination 
                    Then if you want to secure this communication , then you will use SSL and TLS security layer (Session,                        Presentation layers 5,6 layers )on top of this transport layer 
-Application Layer 7 -HTTP/HTTPS/HTTP/2,gRPC - where you represent that data , their data is already transported but 
+- Application Layer 7 -HTTP/HTTPS/HTTP/2,gRPC - where you represent that data , their data is already transported but 
                       you have to present that so that the end user or application can understand that data 
 
 
