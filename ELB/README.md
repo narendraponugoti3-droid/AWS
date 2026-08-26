@@ -1,8 +1,6 @@
-
-
- ELB : load balancer which distributes the incoming traffic across this web server 
- ASG : which is responsible for scaling the number of EC2 instances as per different criteria 
- ELB and ASG are more related to high availability and Scalability 
+- ELB : load balancer which distributes the incoming traffic across this web server 
+- ASG : which is responsible for scaling the number of EC2 instances as per different criteria 
+- ELB and ASG are more related to high availability and Scalability 
 
  Scaling : 
           1. Vertical Scaling 
