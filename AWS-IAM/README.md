@@ -70,143 +70,949 @@ An IAM policy is a JSON document that defines:
 
 In AWS IAM policy evaluation, an explicit Deny has higher precedence than Allow.
 
-# Concept
+# AWS IAM Policies – Complete Notes
 
+## 1. What is an IAM Policy?
 
-AWS IAM (Identity and Access Management) policies are JSON-based permission documents that define what actions a user, group, or role can perform on which AWS resources, under what conditions. [Citation]
-A custom policy gives fine-grained (granular) control beyond predefined AWS managed policies — allowing organizations to restrict or permit specific actions on specific resources. [Citation]
-Every IAM policy is built around three core mandatory elements: Effect, Action, and Resource (commonly abbreviated as EAR). [Citation]
-Policy precedence rule: An explicit Deny always overrides any Allow — if any policy attached to a user contains a Deny for an action, that action is denied regardless of other Allow policies. [Citation]
-Implicit Deny: If no policy explicitly allows an action, access is denied by default — AWS does not grant access unless explicitly permitted. [Citation]
-Condition is an optional but powerful element that restricts when a policy applies — for example, limiting access to a specific IP address range or requiring MFA. [Citation]
-SID (Statement ID) is an optional label/comment field within a policy statement used to describe the intent of that statement. [Citation]
+An **AWS IAM Policy** is a JSON document that defines what actions a user, group, or role can perform on AWS resources.
+
+A policy mainly defines:
+
+```text
+Effect + Action + Resource
+```
+
+You can remember this as:
+
+```text
+EAR
+
+E → Effect
+A → Action
+R → Resource
+```
+
+These are the most important parts of an IAM policy.
+
 ---
-What I understood
-JSON Policy Structure
-A valid IAM policy JSON document begins with opening braces {} and contains a Version field, always set to "2012-10-17" — this value never changes. [Citation]
-Inside the policy, a Statements array holds one or more individual permission blocks, each enclosed in {} within square brackets []. [Citation]
-Each statement contains the three mandatory fields: [Citation]
-    Effect: Either "Allow" or "Deny" — only two valid values exist.
-    Action: Specifies which AWS API actions are permitted or denied (e.g., ec2:StartInstances, s3:ListObjects, s3:GetObject, s3:DeleteObjects).
-    Resource: Specifies the ARN (Amazon Resource Name) of the resource(s) the policy applies to — can be a wildcard * for all resources or a specific ARN.
-ARN (Amazon Resource Name) is a unique identifier for every AWS resource — analogous to a barcode or unique ID number — used to precisely target specific resources in a policy. [Citation]
-Example of a multi-action policy statement covering both EC2 and S3: [Citation]
-    Actions: ec2:StartInstances, ec2:StopInstances, s3:ListObjects, s3:GetObject, s3:DeleteObjects
-    Multiple actions are listed inside a square bracket array []
-    Resource: specific ARN (e.g., arn:aws:ec2:ap-south-1:123456:instance/...) or * for all
-EAR — The Core Policy Elements
-Effect — Determines whether the policy allows or denies the action; must be either Allow or Deny. [Citation]
-Action — Defines what API operation is being controlled; uses the format service:ActionName (e.g., ec2:StartInstances, s3:GetObject, ec2:* for all EC2 actions). [Citation]
-Resource — Defines the specific AWS resource(s) the policy applies to; using * grants access to all resources of that type, while a specific ARN restricts to a single resource. [Citation]
-Wildcard (*) Usage
-Using ec2:* as the action grants full access to all EC2 operations — start, stop, reboot, terminate, create, delete, etc. [Citation]
-Using * as the resource grants permissions across all resources of the specified service.
-While convenient, using wildcards (especially ec2:* or *) is not recommended in production — granular permissions are the best practice. [Citation]
-Multiple Statements in One Policy
-A single policy document can contain multiple statements, each with its own Effect, Action, and Resource. [Citation]
-Example: One statement grants full EC2 permissions; a second statement grants S3 GetObject (read-only) permissions — both coexist in the same policy. [Citation]
-Statements are separated by commas inside the Statements array.
-Deny Policy and Conflict Resolution
-When a Deny and an Allow exist in the same policy or across attached policies for the same action, Deny always wins — no exceptions. [Citation]
-Example scenario: A user has a policy allowing full S3 permissions AND a separate statement denying s3:DeleteBucket. [Citation]
-    If the user tries to delete a bucket → AWS checks for any Deny first → Deny found → Access Denied, no questions asked.
-    If the user tries to create a bucket → AWS checks for Deny → No Deny found → AWS checks for Allow → Allow found → Access Granted.
-    If the user tries to create a VPC → No policy covers VPC at all → No explicit Allow exists → Implicit Deny → Access Denied. [Citation]
-The policy evaluation flow: [Citation]
-    Check for explicit Deny → if found, deny immediately.
-    Check for explicit Allow → if found, allow.
-    If neither → implicit deny (default behavior).
-SID — Statement Identifier
-SID is an optional field that acts like a comment or label for a policy statement. [Citation]
-Example SID value: "This policy will allow users to perform any action on EC2 instances and read S3 objects"
-Helps administrators understand the intent of each statement without reading the full JSON logic.
-Condition Element
-Condition is an optional fourth element that adds constraints on when a policy applies. [Citation]
-Two common use cases demonstrated: [Citation]
-    IP Address restriction: Policy only applies if the request originates from a specific IP range (e.g., office network 0.0.0.0/16 or VPN IP 203.x.x.x/32). If the user is not on the office network or VPN, access is denied even if the policy would otherwise allow it. [Citation]
-    MFA (Multi-Factor Authentication) requirement: Policy only applies if the user has MFA configured and active. Without MFA, the user cannot access the resource even if the Allow policy is attached. [Citation]
-Conditions make policies context-aware — the same user can have different effective permissions depending on their network location or authentication state.
-Visual Policy Editor
-AWS provides two methods to create custom policies: [Citation]
-    JSON editor: Write raw JSON directly — requires knowledge of JSON structure and AWS action names.
-    Visual editor: A GUI-driven interface that has matured significantly — allows creation of granular permissions without writing JSON manually.
-In the Visual editor, selecting a service (e.g., EC2) dynamically loads all available action categories: [Citation]
-    List actions (e.g., DescribeInstances, DescribeVolumes)
-    Read actions (e.g., GetConsoleOutput, GetPasswordData)
-    Write actions (e.g., CreateKeyPair, CreateLaunchTemplate, CopyImage, CopySnapshot)
-    Tagging actions (e.g., CreateTags, DeleteTags)
-    Permission management actions
-Selecting specific actions (e.g., only DescribeInstances under List) creates a granular permission — the user can only describe instances, not start, stop, or terminate them. [Citation]
-After selecting actions, you specify Resources: either all (*) or a specific ARN. [Citation]
-Visual editor and JSON editor are synchronized — changes in one are reflected in the other automatically. [Citation]
-Live Demo — Custom Policy Creation and Testing
-A custom policy named "full access to EC2 instances" was created: [Citation]
-    Action: ec2:* (all EC2 actions)
-    Resource: * (all resources)
-This policy was attached to a test user (S3 Admin / DevOps Engineer user) with console access and a custom password. [Citation]
-Testing in incognito window: [Citation]
-    Attempted to create an S3 bucket → Denied — policy does not grant S3 permissions.
-    Attempted to launch an EC2 instance → Denied — even with EC2 full access policy, the AMI (Amazon Machine Image) used was from another account/region, causing an authorization error. [Citation]
-    Successfully launched an EC2 instance using the correct AMI → Confirmed full EC2 access works. [Citation]
-Granular Custom Policy — 4 Actions Only
-The policy was then edited to restrict the user to only 4 specific EC2 actions: [Citation]
-    ec2:RebootInstances
-    ec2:StartInstances
-    ec2:StopInstances
-    ec2:DescribeInstances
-After saving, the user could no longer launch new instances — only start, stop, reboot, and describe existing ones. [Citation]
-In the EC2 console, the user could see instances but volume descriptions failed because DescribeVolumes was not included — demonstrating true granularity. [Citation]
-Only the 4 permitted actions appeared as enabled options in the instance action menu; all others were grayed out or returned "not authorized." [Citation]
-S3 Custom Policy Demo
-A separate S3 policy was constructed targeting a specific S3 bucket (Terraform demo bucket): [Citation]
-    Actions: s3:GetObject (download), s3:PutObject (upload)
-    Resource: Specific bucket ARN copied from the bucket properties [Citation]
-In the Visual editor, S3 object-level actions were found under the Object category: [Citation]
-    GetObject — grants permission to retrieve/download objects from S3
-    PutObject — grants permission to upload/add objects to a bucket
-    RestoreObject — also available but not selected
+
+# 2. Ways to Create an IAM Policy
+
+AWS provides two main ways to create a policy:
+
+1. **Visual Editor**
+2. **JSON Editor**
+
+The Visual Editor makes it easier to select services, actions, resources, and conditions. The JSON editor allows you to directly define the policy structure.
+
 ---
-What I didn't fully get
-Why ARN Matters for Resource Specification
-ARN uniquely identifies every AWS resource — without specifying the correct ARN, a policy either applies too broadly (using *) or fails to target the right resource. [Citation]
-ARN format for EC2: arn:aws:ec2:<region>:<account-id>:instance/<instance-id>
-When you copy an ARN from the AWS console (e.g., from an S3 bucket's Properties tab), you can paste it directly into the Resource field of a policy to ensure the policy applies only to that specific resource. [Citation]
-Using * as the resource is called "overly promiscuous" — it grants access to all resources of that type, which is a security risk in production environments. [Citation]
-Conflicting Statements — How AWS Resolves Them
-When a user has multiple policies attached (directly or via groups), AWS evaluates all of them together. [Citation]
-The resolution logic is strict:
-    Any explicit Deny in any attached policy = immediate denial, regardless of any Allow anywhere.
-    An explicit Allow with no conflicting Deny = access granted.
-    No matching policy at all = implicit deny (access denied by default).
-This means you can safely write broad Allow policies and then layer specific Deny statements on top to carve out exceptions — the Deny will always take precedence. [Citation]
-Condition Operators
-Conditions use operators to compare request attributes against expected values. [Citation]
-For IP address conditions, the operator checks whether the request's source IP falls within a specified CIDR range.
-For MFA conditions, the operator checks whether the authenticated session has MFA active.
-Multiple conditions can be combined — e.g., require BOTH a specific IP range AND MFA to be present for access to be granted. [Citation]
-Visual Editor vs. JSON — When to Use Which
-JSON is preferred when you need to write complex, multi-statement policies quickly or when copying policy templates. [Citation]
-Visual editor is better for beginners or when you need to discover available actions for a service without memorizing action names. [Citation]
-Both produce identical output — the visual editor generates valid JSON behind the scenes, and any JSON written manually is reflected in the visual editor. [Citation]
-Azure IAM vs. AWS IAM
-In Azure, IAM is more streamlined — it integrates with Active Directory, where users and groups are managed centrally, and IT admins handle most configurations. [Citation]
-In AWS, IAM is more explicit — you must manually create users, groups, and policies, and attach them deliberately.
-AWS IAM gives more granular control but requires more intentional configuration compared to Azure's AD-integrated approach.
+
+# 3. Basic IAM Policy Structure
+
+A basic IAM policy looks like this:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowSpecificActions",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "s3:ListBucket",
+        "s3:GetObject"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
 ---
-Might show up on the exam
-JSON policy version is always "2012-10-17" — never changes, never use a different value. [Citation]
-EAR = Effect + Action + Resource — the three mandatory fields in every IAM policy statement; SID and Condition are optional. [Citation]
-Effect values: Only two valid options — "Allow" or "Deny" — no other values are accepted. [Citation]
-Deny always wins: Explicit Deny overrides any Allow — this is the most tested IAM concept. No exceptions. [Citation]
-Implicit Deny: If no policy grants access, access is denied by default — AWS does not allow anything unless explicitly permitted. [Citation]
-Policy evaluation order: (1) Check for explicit Deny → (2) Check for explicit Allow → (3) Implicit Deny if neither found. [Citation]
-Wildcard * in Action: ec2:* = all EC2 actions; s3:* = all S3 actions; * alone = all actions on all services (extremely broad, not recommended). [Citation]
-Wildcard * in Resource: Grants permissions on all resources of the specified service — use specific ARNs for least-privilege access. [Citation]
-ARN uniqueness: Every AWS resource has a unique ARN — used to precisely target resources in policies. [Citation]
-SID is optional: Acts as a label/comment — does not affect policy logic or enforcement. [Citation]
-Condition use cases to know: IP address restriction (CIDR range), MFA requirement — both are common exam scenarios. [Citation]
-Two policy editor types: Visual editor and JSON editor — both produce the same output; visual editor auto-updates JSON. [Citation]
-Custom vs. Managed policies: AWS-managed policies are predefined; custom policies are user-created for specific organizational requirements. [Citation]
-Multiple statements: A single policy document supports multiple statements — each can have different Effect, Action, Resource combinations. [Citation]
-Conflicting Allow + Deny on same action: Deny wins — user cannot perform the action regardless of the Allow. [Citation]
-No matching policy = implicit deny: If a user tries an action not covered by any policy, it is denied automatically — not an error, just a default deny. [Citation]
+
+# 4. Version
+
+```json
+"Version": "2012-10-17"
+```
+
+This specifies the version of the IAM policy language.
+
+`2012-10-17` is the commonly used IAM policy version.
+
+---
+
+# 5. Statement
+
+```json
+"Statement": []
+```
+
+The `Statement` contains the actual permission rules.
+
+You can have:
+
+* One statement
+* Multiple statements
+
+Example:
+
+```text
+Statement
+   │
+   ├── Statement 1 → EC2 permissions
+   │
+   ├── Statement 2 → S3 permissions
+   │
+   └── Statement 3 → Deny a specific action
+```
+
+Multiple statements can be used when different permissions or conditions are required.
+
+---
+
+# 6. Sid
+
+```json
+"Sid": "AllowSpecificActions"
+```
+
+`Sid` means **Statement ID**.
+
+It is an optional label/identifier for a statement.
+
+You can think of it as:
+
+```text
+Sid = Label / Name / Comment for the statement
+```
+
+For example:
+
+```json
+"Sid": "AllowEC2Management"
+```
+
+This helps administrators understand what the statement is intended to do.
+
+---
+
+# 7. Effect
+
+```json
+"Effect": "Allow"
+```
+
+`Effect` determines whether the permission is allowed or denied.
+
+There are only two values:
+
+```text
+Allow
+Deny
+```
+
+Example:
+
+```json
+"Effect": "Allow"
+```
+
+means the action is permitted.
+
+Example:
+
+```json
+"Effect": "Deny"
+```
+
+means the action is explicitly denied.
+
+---
+
+# 8. Action
+
+The `Action` specifies **what the user is allowed or denied to do**.
+
+Example:
+
+```json
+"Action": [
+  "ec2:StartInstances",
+  "ec2:StopInstances",
+  "ec2:RebootInstances"
+]
+```
+
+This allows the specified EC2 actions.
+
+For S3:
+
+```json
+"Action": [
+  "s3:ListBucket",
+  "s3:GetObject",
+  "s3:PutObject"
+]
+```
+
+Examples of actions:
+
+```text
+ec2:StartInstances
+ec2:StopInstances
+ec2:RebootInstances
+
+s3:ListBucket
+s3:GetObject
+s3:PutObject
+s3:DeleteObject
+```
+
+AWS permissions can be made very granular. For example, instead of giving full EC2 access, you can give a user only:
+
+```text
+Start instance
+Stop instance
+Reboot instance
+Describe instances
+```
+
+## This is called **granular permissions**.
+
+# 9. Resource
+
+The `Resource` specifies **which AWS resource the permission applies to**.
+
+Example:
+
+```json
+"Resource": "*"
+```
+
+`*` means all applicable resources.
+
+However, instead of allowing access to everything, you can specify a particular resource using its **ARN**.
+
+Example:
+
+```text
+arn:aws:ec2:region:account-id:instance/instance-id
+```
+
+Think of an ARN as a unique identifier for an AWS resource.
+
+```text
+Resource = Which resource?
+Action   = What can I do?
+```
+
+The training notes emphasize that resources can be restricted to specific resources rather than giving access to everything.
+
+---
+
+# 10. Condition
+
+A `Condition` adds an additional requirement that must be satisfied before the policy applies.
+
+Example:
+
+```json
+"Condition": {
+  "IpAddress": {
+    "aws:SourceIp": [
+      "172.16.0.0/16",
+      "203.78.98.0/32"
+    ]
+  }
+}
+```
+
+This can be used to restrict access based on the source IP address.
+
+For example:
+
+```text
+User
+  │
+  ▼
+AWS Request
+  │
+  ▼
+Is request coming from allowed IP?
+  │
+  ├── YES → Permission can apply
+  │
+  └── NO  → Permission does not apply
+```
+
+The training notes give IP address restrictions as an example of using conditions, including restricting access to an office/VPN IP range.
+
+---
+
+# 11. MFA Condition
+
+A condition can also be used to require MFA.
+
+Conceptually:
+
+```text
+User
+  │
+  ▼
+MFA configured/authenticated?
+  │
+  ├── YES → Access can be allowed
+  │
+  └── NO  → Access can be denied
+```
+
+Conditions can therefore be used to add additional security requirements to resource access.
+
+---
+
+# 12. Multiple Actions in One Statement
+
+If multiple actions have the same Effect, Resource, and Condition, they can be placed in one statement.
+
+Example:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EC2AndS3Access",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:RebootInstances",
+        "s3:ListBucket",
+        "s3:GetObject"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+---
+
+# 13. Multiple Statements
+
+Multiple statements are useful when permissions have different requirements.
+
+Example:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowEC2Actions",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:RebootInstances"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowS3Read",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+Each statement can have its own:
+
+```text
+Effect
+Action
+Resource
+Condition
+```
+
+---
+
+# 14. Explicit Deny Has Highest Precedence
+
+This is one of the **most important IAM concepts**.
+
+> **An explicit Deny overrides an Allow.**
+
+Suppose a user has:
+
+```text
+Allow → s3:DeleteBucket
+```
+
+but another policy contains:
+
+```text
+Deny → s3:DeleteBucket
+```
+
+The result is:
+
+```text
+❌ DENIED
+```
+
+Even though an Allow exists.
+
+The training notes specifically explain that AWS checks for a deny and that **Deny has the highest precedence**.
+
+---
+
+# 15. IAM Policy Evaluation – Simple Flow
+
+Remember this flow:
+
+```text
+                AWS Request
+                     │
+                     ▼
+          ┌─────────────────────┐
+          │ Is there an explicit│
+          │       DENY?         │
+          └──────────┬──────────┘
+                     │
+             ┌───────┴───────┐
+            YES              NO
+             │                │
+             ▼                ▼
+        ❌ DENY        Is there an ALLOW?
+                              │
+                       ┌──────┴──────┐
+                      YES            NO
+                       │              │
+                       ▼              ▼
+                   ✅ ALLOW       ❌ DENY
+                                  (Implicit)
+```
+
+### Remember:
+
+```text
+Explicit Deny
+     ↓
+Highest precedence
+     ↓
+❌ DENY
+```
+
+If there is no explicit Deny, there must be an applicable Allow.
+
+If there is no applicable Allow, the request is denied.
+
+---
+
+# 16. Example – Allow + Deny Conflict
+
+Suppose:
+
+### Policy 1
+
+```json
+{
+  "Effect": "Allow",
+  "Action": "s3:DeleteBucket",
+  "Resource": "*"
+}
+```
+
+### Policy 2
+
+```json
+{
+  "Effect": "Deny",
+  "Action": "s3:DeleteBucket",
+  "Resource": "*"
+}
+```
+
+The user tries:
+
+```text
+Delete S3 Bucket
+```
+
+Both policies match:
+
+```text
+Allow → YES
+Deny  → YES
+```
+
+Final result:
+
+```text
+❌ DENIED
+```
+
+Why?
+
+```text
+Explicit Deny > Allow
+```
+
+---
+
+# 17. Implicit Deny
+
+There is another type of denial called **implicit deny**.
+
+Suppose the user has:
+
+```text
+Allow:
+  ec2:StartInstances
+```
+
+But the user tries:
+
+```text
+ec2:TerminateInstances
+```
+
+There is no Allow for `TerminateInstances`.
+
+Therefore:
+
+```text
+No Allow
++
+No Explicit Deny
+        ↓
+Implicit Deny
+        ↓
+❌ DENIED
+```
+
+The training notes distinguish this situation from an explicit Deny.
+
+---
+
+# 18. Explicit Deny vs Implicit Deny
+
+| Type          | Meaning                                                      | Result    |
+| ------------- | ------------------------------------------------------------ | --------- |
+| Explicit Deny | A policy specifically says `Deny`                            | ❌ Denied  |
+| Implicit Deny | No applicable Allow exists                                   | ❌ Denied  |
+| Allow         | An applicable Allow exists and no explicit Deny overrides it | ✅ Allowed |
+
+Remember:
+
+```text
+Explicit Deny → strongest
+No Allow      → implicit deny
+Allow         → access granted if not explicitly denied
+```
+
+---
+
+# 19. Full Access vs Granular Access
+
+### Full access
+
+Example:
+
+```text
+EC2
+ └── *
+```
+
+This represents very broad EC2 permissions.
+
+A user may be able to perform many EC2 operations.
+
+### Granular access
+
+Instead of:
+
+```text
+ec2:*
+```
+
+you can specify:
+
+```text
+ec2:StartInstances
+ec2:StopInstances
+ec2:RebootInstances
+ec2:DescribeInstances
+```
+
+The user can then perform only the required activities.
+
+The training demonstrates this approach by giving a user only four EC2 activities: start, stop, reboot, and describe instances.
+
+---
+
+# 20. Principle of Least Privilege
+
+A good IAM policy should provide only the permissions required to perform the job.
+
+Instead of:
+
+```text
+EC2 → Full Access
+```
+
+give:
+
+```text
+EC2
+ ├── StartInstances
+ ├── StopInstances
+ ├── RebootInstances
+ └── DescribeInstances
+```
+
+Instead of:
+
+```text
+S3 → Full Access
+```
+
+give:
+
+```text
+S3
+ ├── ListBucket
+ └── GetObject
+```
+
+This reduces unnecessary access and improves security.
+
+---
+
+# 21. S3 Example
+
+Suppose a user needs to download objects from an S3 bucket.
+
+Required actions could include:
+
+```text
+s3:ListBucket
+s3:GetObject
+```
+
+If the user also needs to upload:
+
+```text
+s3:PutObject
+```
+
+If the user needs to delete objects:
+
+```text
+s3:DeleteObject
+```
+
+Therefore, permissions should be based on the actual requirement.
+
+---
+
+# 22. Example – Read-Only EC2 User
+
+A user needs to view EC2 information but should not start, stop, or terminate instances.
+
+Policy concept:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EC2ReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+The user can view the required EC2 information but does not have permission to start or stop instances.
+
+---
+
+# 23. Example – EC2 Operations User
+
+A user needs only:
+
+```text
+Start
+Stop
+Reboot
+Describe
+```
+
+Example:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EC2Operations",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:RebootInstances",
+        "ec2:DescribeInstances"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+This is more granular than giving:
+
+```text
+ec2:*
+```
+
+---
+
+# 24. Example – S3 Read and Write
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3ReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+This allows the specified S3 activities.
+
+---
+
+# 25. Example – Allow S3 but Deny Delete
+
+Suppose a user should have broad S3 access but must **never delete objects**.
+
+Conceptually:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowS3Access",
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyObjectDeletion",
+      "Effect": "Deny",
+      "Action": "s3:DeleteObject",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+The user has:
+
+```text
+S3 Allow → YES
+DeleteObject Deny → YES
+```
+
+Therefore:
+
+```text
+❌ DeleteObject = DENIED
+```
+
+because:
+
+```text
+Explicit Deny overrides Allow
+```
+
+---
+
+# 26. Important IAM Terms
+
+| Term                | Meaning                                   |
+| ------------------- | ----------------------------------------- |
+| Policy              | Defines permissions                       |
+| Statement           | Individual permission rule                |
+| Sid                 | Label/identifier for a statement          |
+| Effect              | Allow or Deny                             |
+| Action              | Operation the user can perform            |
+| Resource            | AWS resource the action applies to        |
+| Condition           | Additional requirement                    |
+| ARN                 | Unique identifier for an AWS resource     |
+| Explicit Deny       | Policy explicitly says Deny               |
+| Implicit Deny       | No applicable Allow                       |
+| Granular Permission | Permission for a specific action/resource |
+
+---
+
+# 27. Easy IAM Policy Formula
+
+Remember:
+
+```text
+POLICY
+  │
+  ├── Version
+  │
+  └── Statement
+        │
+        ├── Sid       → Label
+        ├── Effect    → Allow / Deny
+        ├── Action    → What?
+        ├── Resource  → Which resource?
+        └── Condition → Under what condition?
+```
+
+The most important part to remember:
+
+```text
+Effect + Action + Resource
+```
+
+And for policy evaluation:
+
+```text
+Explicit DENY
+      ↓
+Overrides ALLOW
+```
+
+---
+
+# 28. Interview Questions
+
+### Q1. What is an IAM policy?
+
+An IAM policy is a JSON document that defines permissions for AWS resources.
+
+### Q2. What are the two ways to create an IAM policy?
+
+```text
+1. Visual Editor
+2. JSON Editor
+```
+
+### Q3. What are the two possible values for Effect?
+
+```text
+Allow
+Deny
+```
+
+### Q4. What does Action define?
+
+It defines the AWS operation that can be performed.
+
+Example:
+
+```text
+ec2:StartInstances
+```
+
+### Q5. What does Resource define?
+
+It defines which AWS resource the action applies to.
+
+### Q6. What does Condition do?
+
+It adds additional conditions that must be satisfied for the statement to apply.
+
+### Q7. Which has higher precedence: Allow or Explicit Deny?
+
+```text
+Explicit Deny
+```
+
+### Q8. What happens if one policy allows an action and another explicitly denies it?
+
+```text
+❌ DENIED
+```
+
+### Q9. What is implicit deny?
+
+If there is no applicable Allow, access is denied by default.
+
+### Q10. Why use granular permissions?
+
+To give users only the permissions they actually need instead of unnecessary full access.
+
+---
+
+# 29. Golden Rules to Remember
+
+```text
+1. IAM policies are JSON documents.
+
+2. A policy contains one or more Statements.
+
+3. Sid is an optional label/identifier.
+
+4. Effect can be Allow or Deny.
+
+5. Action defines WHAT the user can do.
+
+6. Resource defines WHERE the action can be performed.
+
+7. Condition defines additional requirements.
+
+8. ARN identifies a specific AWS resource.
+
+9. Explicit Deny overrides Allow.
+
+10. No applicable Allow results in implicit Deny.
+
+11. Prefer granular permissions over unnecessary full access.
+
+12. Use Conditions when access needs additional restrictions
+    such as source IP or MFA requirements.
+```
+
+## One-line memory trick
+
+```text
+Action   = WHAT can I do?
+Resource = WHERE can I do it?
+Condition = UNDER WHAT CONDITIONS?
+Effect   = ALLOW or DENY?
+
+And remember:
+
+EXPLICIT DENY > ALLOW
+```
+
