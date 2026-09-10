@@ -1016,3 +1016,30 @@ And remember:
 EXPLICIT DENY > ALLOW
 ```
 
+<img width="1128" height="618" alt="image" src="https://github.com/user-attachments/assets/857fffd9-ea37-4ef7-99f5-0a8ef5440d0e" />
+
+1. Create VM with Name : DevVM1 and tag : Environment Dev
+2. Create VM with Name : ProdVM1 and tag : Environment Prod
+3. Create VM with Name : QAVM1 and tag : Environment Qa
+
+Then Go to IAM -> Policies --> Create a Policies 
+<img width="1680" height="636" alt="image" src="https://github.com/user-attachments/assets/f1e87641-5145-4867-887c-6e93608e5e85" />
+
+Then Create a NEW USER with attached above Policy 
+<img width="1315" height="364" alt="image" src="https://github.com/user-attachments/assets/86f854b0-73ba-4f62-943e-53fe088d35d1" />
+
+Create a Role --> AWS Services --> Use Case : EC2 --> Use existing Role : S3FullAccess --> Name :EC2FullaccesstoS3 --> create it 
+Then Log in VM --> sudo su - --> aws s3 list then gives the error : Unable to locate Credentials 
+So you need to give the permissions for VM 
+we need to give the role to EC2 VM --> Actions-->Security--> Modify IAM Role :
+$ aws s3 list 
+it is showing all list 
+Then Create a text file then move to S3 bucket 
+$ aws s3 cp invoice.txt s3://s3-bucket-name 
+
+### Programmatic Access : 
+Install AWS CLI on windows 
+Verify it 
+$ aws --version 
+give the credentials 
+$ aws configure 
