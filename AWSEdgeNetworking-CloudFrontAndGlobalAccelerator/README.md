@@ -29,7 +29,14 @@ Advantage of CF is that it reduces the load on your origin servers
 <img width="1720" height="849" alt="image" src="https://github.com/user-attachments/assets/b59d6822-76d3-491d-a27c-939a72916a87" />
 
 <img width="1870" height="897" alt="image" src="https://github.com/user-attachments/assets/42b23e69-5f32-4fe3-978a-8a28fe3cf74c" />
-ClodFront , the most importent component is the cloudfront distribute and the Origin 
+ClodFront , the most importent component is the cloudfront distribute and in the distribution ,
+you will then define the origin which means where exactly your application is hosted 
+
+Now end user will make the request to the cloudFront DNS , which will basically takes that request to the nearest 
+Edge Location and form there , as you have configured the origin as the application load balancer
+this traffic will go from the cloud front edge location to this load balancer over the AWS backbone network 
+
+and the Origin 
 Distribution is all about configuring which origins are there , how to route the traffic , wheather to enable specific security features 
 Origin server means where exactly your application is hosted 
 
