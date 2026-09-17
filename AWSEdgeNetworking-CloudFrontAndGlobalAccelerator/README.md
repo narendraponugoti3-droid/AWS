@@ -7,6 +7,15 @@ if you use aws edge network , then this traffic may go through something like th
 which means most of the traffic flow over through AWS backbone network 
 <img width="1218" height="640" alt="image" src="https://github.com/user-attachments/assets/78791352-700d-41da-ac93-3f05523f97aa" />
 
+
+``` text
+AWS Edge Networking : Access application with lowest latency across the globe 
+if you use AWS edge Network then this traffic may go something like which means most of the traffic flow over through AWS backbone network 
+with out AWS Edge network , there will be a lot of network hops and that's where latency is not really predictable or consistent 
+But if you go AWS edge network then only the traffic from end user to the nearest AWS edge location will go over the intrnent
+and rest of the traffic will be routed through AWS backbone network 
+So which means AWS edge location provide the consistent and low latency 
+```
 # AWS CloudFront 
 CF can delivery this content over the low latency network and also it can cache the content in the nearest edge location of the user 
 and thats where CF improves the end user exprerince 
