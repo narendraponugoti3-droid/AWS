@@ -9,11 +9,14 @@ which means most of the traffic flow over through AWS backbone network
 
 
 ``` text
-AWS Edge Networking : Access application with lowest latency across the globe 
-if you use AWS edge Network then this traffic may go something like which means most of the traffic flow over through AWS backbone network 
+AWS Edge Networking : Access application with lowest latency across the globe
+
+if you use AWS edge Network then this traffic may go something like which means most of the traffic flow over through AWS backbone network
+
 with out AWS Edge network , there will be a lot of network hops and that's where latency is not really predictable or consistent 
-But if you go AWS edge network then only the traffic from end user to the nearest AWS edge location will go over the intrnent
-and rest of the traffic will be routed through AWS backbone network 
+But if you go AWS edge network then only the traffic from end user to the nearest
+ AWS edge location will go over the intrnent and rest of the traffic will be routed through AWS backbone network
+
 So which means AWS edge location provide the consistent and low latency 
 ```
 # AWS CloudFront 
