@@ -101,3 +101,32 @@ CloudFront support mutual TLS menas CloudFront validate the client certificates 
 <img width="1765" height="907" alt="image" src="https://github.com/user-attachments/assets/6a979aef-1452-4ff1-8006-711094aca96e" />
 
 <img width="1685" height="804" alt="image" src="https://github.com/user-attachments/assets/010daa7c-7fea-4eed-9021-ccd2972d21c9" />
+
+# CloudFront Features 
+<img width="1830" height="885" alt="image" src="https://github.com/user-attachments/assets/a0c0b5d4-64e4-4882-9ba1-61a7f13bf0a7" />
+<img width="1798" height="881" alt="image" src="https://github.com/user-attachments/assets/8d1c0695-ef3d-4ee4-ba0f-47270bad1840" />
+
+<img width="1816" height="938" alt="image" src="https://github.com/user-attachments/assets/c8e4be4f-4780-47b4-86dd-a379ac9b9e7d" />
+
+
+<img width="1836" height="912" alt="image" src="https://github.com/user-attachments/assets/4e38ffb5-6689-46ca-a456-c56ea1257a7e" />
+
+
+Cache Invalidations is charging some fess , first 1000 invalidation are free per month and after that you will pay for additional invalidation 
+
+
+<img width="1841" height="943" alt="image" src="https://github.com/user-attachments/assets/bcc62063-e3ce-4e28-956a-9aff2ffc04cd" />
+
+<img width="1800" height="930" alt="image" src="https://github.com/user-attachments/assets/d00dc27d-0a2d-404f-9c5a-46fb74fc605a" />
+
+<img width="1830" height="936" alt="image" src="https://github.com/user-attachments/assets/9cd30d0e-86b9-4d1e-a09e-383d38a9bd7c" />
+
+
+# ClodFront Security - AWS WAF and AWS Shield 
+we apply the AWS WAF at cloudfront level , all request filtering happens at the edge level and that means your traffic 
+never reaches to the origin , there by reducing the load on the origin if WAF identifies that as malicious request 
+So Both at the Security level , it protects your origin and also it reduce the load on your origin 
+
+Using CloudFront +WAF+ Shield together provides a multi-layered , global defense against both network layer and application layer threats 
+<img width="1134" height="535" alt="image" src="https://github.com/user-attachments/assets/e6868c44-705d-4ac8-88ba-1197e329d6e2" />
+<img width="1692" height="909" alt="image" src="https://github.com/user-attachments/assets/8319bbac-d371-42fc-9a46-fc137e344c5e" />
