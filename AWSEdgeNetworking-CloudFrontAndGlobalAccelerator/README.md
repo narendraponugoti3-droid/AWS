@@ -130,3 +130,9 @@ So Both at the Security level , it protects your origin and also it reduce the l
 Using CloudFront +WAF+ Shield together provides a multi-layered , global defense against both network layer and application layer threats 
 <img width="1134" height="535" alt="image" src="https://github.com/user-attachments/assets/e6868c44-705d-4ac8-88ba-1197e329d6e2" />
 <img width="1692" height="909" alt="image" src="https://github.com/user-attachments/assets/8319bbac-d371-42fc-9a46-fc137e344c5e" />
+
+
+
+# AWS Global Accelerator 
+<img width="1712" height="741" alt="image" src="https://github.com/user-attachments/assets/2dcea04f-b9ef-418a-ad7e-e11de26f9f61" />
+
